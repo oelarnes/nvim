@@ -28,14 +28,14 @@
 --  o       insert below                        insert above                    back in jump stack
 --  p       put                                 put before                      
 --  q       record macro                        playback last register          quit
---  r
---  s
---  t
---  u
---  v
---  w
---  x
---  y
+--  r       replace                             replace many                    redo
+--  s       cl                                  c$                              save
+--  t       to                                  back to                         
+--  u       undo                                undo line                       half-page up
+--  v       visual mode                         visual line                     visual block
+--  w       word forward                        WORD forward                    window commands
+--  x       delete char                         delete back                 
+--  y       yank                                yank lines                      
 --  z
 --  {[
 --  }]
