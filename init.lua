@@ -50,6 +50,7 @@
 --  `~
 --
 -- ]
+
 -- the basics
 vim.g.mapleader = vim.keycode" "
 vim.cmd.inoremap("jk <esc>")
@@ -59,6 +60,7 @@ vim.cmd.set("number relativenumber")
 -- display
 vim.cmd.nnoremap("<leader>n :set number! relativenumber!<CR>")
 vim.cmd.nnoremap("<leader>h :noh<CR>")
+vim.g.have_nerd_font = True
 
 -- save and quit
 vim.cmd.inoremap("<C-s> <esc>:w<CR>i")
