@@ -11,45 +11,45 @@
 --                                                                                       
 --          lowercase                           uppercase                           CTRL-                           <leader>
 --          =========                           =========                           =====                           ========
---  a       append                              append EOL                                                        
---  b       back word                           back WORD                           TODO: beginning of block
---  c       change                              c$                                  close buffer                    colorscheme
---  d       delete                              d$                                  half-page down
---  e       end of word                         end of WORD                         TODO: end of block
---  f       find char                           ?find char                          explore cwd
---  g       go                                  goto line                           
---  h       left                                blank line above                    window left                     turn off highlighting
---  i       insert                              insert BOL                          forward in jump stack           load init.lua
---  j       down                                join lines                          window down
---  k       up                                  help lookup                         window up
---  l       right                               blank line below                    window right                    ls
---  m       mark                                                                 
---  n       next match                          previous match                      next buffer                     toggle numbers
---  o       insert below                        insert above                        back in jump stack
---  p       put                                 put before                          
---  q       record macro                        playback last register              quit
---  r       replace                             replace many                        redo
---  s       cl                                  cc                                  save
---  t       to                                  back to                             
---  u       undo                                undo line                           half-page up
---  v       visual mode                         visual line                         visual block
---  w       word forward                        WORD forward                        window commands
---  x       delete char                         delete back                  
---  y       yank                                yank lines                      
---  z       folds                               ZZ/ZQ
---  -_      up linewise and first nonspace      first nonspace char
---  =+      filter <motion> through equalprg    down linewise and first nonspace    
---  [{      backward movements                  up paragraph                        
---  ]}      forward movements                   down paragraph                      into tag
---  \|                                                                              vsplit
---  ;:      next f match                        command
---  '"      
---  ,<
---  .>
---  /?
---  `~
---
--- ]
+-- | a  |   append                              append EOL                                                        
+-- | b  |   back word                           back WORD                           TODO: beginning of block
+-- | c  |   change                              c$                                  close buffer                    colorscheme
+-- | d  |   delete                              d$                                  half-page down
+-- | e  |   end of word                         end of WORD                         TODO: end of block
+-- | f  |   find char                           ?find char                          explore cwd
+-- | g  |   go                                  goto line                           
+-- | h  |   left                                blank line above                    window left                     turn off highlighting
+-- | i  |   insert                              insert BOL                          forward in jump stack           load init.lua
+-- | j  |   down                                join lines                          window down
+-- | k  |   up                                  help lookup                         window up
+-- | l  |   right                               blank line below                    window right                    ls
+-- | m  |   mark                                                                 
+-- | n  |   next match                          previous match                      next buffer                     toggle numbers
+-- | o  |   insert below                        insert above                        back in jump stack
+-- | p  |   put                                 put before                          
+-- | q  |   record macro                        playback last register              quit
+-- | r  |   replace                             replace many                        redo
+-- | s  |   cl                                  cc                                  save
+-- | t  |   to                                  back to                             
+-- | u  |   undo                                undo line                           half-page up
+-- | v  |   visual mode                         visual line                         visual block
+-- | w  |   word forward                        WORD forward                        window commands
+-- | x  |   delete char                         delete back                  
+-- | y  |   yank                                yank lines                      
+-- | z  |   folds                               ZZ/ZQ
+-- | -_ |   up linewise and first nonspace      first nonspace char
+-- | =+ |   filter <motion> through equalprg    down linewise and first nonspace    
+-- | [{ |   backward movements                  up paragraph                        
+-- | ]} |   forward movements                   down paragraph                      into tag
+-- | \| |                                                                           vsplit
+-- | ;: |   next f match                        command
+-- | '" |   
+-- | ,< |
+-- | .>
+-- | /?
+-- | `~
+-- |
+-- 
 
 -- the basics
 vim.g.mapleader = vim.keycode" "
