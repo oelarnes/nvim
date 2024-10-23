@@ -12,14 +12,14 @@
 --          lowercase                           uppercase                           CTRL-                           <leader>
 --          =========                           =========                           =====                           ========
 --  a       append                              append EOL                                                        
---  b       back word                           back WORD                           TODO: beginning of block
+--  b       back word                           back WORD                           tmux
 --  c       change                              c$                                  close buffer                    colorscheme
 --  d       delete                              d$                                  half-page down
---  e       end of word                         end of WORD                         TODO: end of block
+--  e       end of word                         end of WORD                                                         edit shortcuts
 --  f       find char                           ?find char                          explore cwd
 --  g       go                                  goto line                           
 --  h       left                                blank line above                    window left                     turn off highlighting
---  i       insert                              insert BOL                          forward in jump stack           load init.lua
+--  i       insert                              insert BOL                          forward in jump stack           
 --  j       down                                join lines                          window down
 --  k       up                                  help lookup                         window up
 --  l       right                               blank line below                    window right                    ls
@@ -27,15 +27,15 @@
 --  n       next match                          previous match                      next buffer                     toggle numbers
 --  o       insert below                        insert above                        back in jump stack
 --  p       put                                 put before                          
---  q       record macro                        playback last register              quit
+--  q       record macro                        playback last register              quit                            quality (lint)
 --  r       replace                             replace many                        redo
---  s       cl                                  cc                                  save
---  t       to                                  back to                             
+--  s       cl                                  cc                                  save                            system clipboard
+--  t       to                                  back to                                                             testing
 --  u       undo                                undo line                           half-page up
 --  v       visual mode                         visual line                         visual block
 --  w       word forward                        WORD forward                        window commands
 --  x       delete char                         delete back                  
---  y       yank                                yank lines                      
+--  y       yank                                y$                      
 --  z       folds                               ZZ/ZQ
 --  -_      up linewise and first nonspace      first nonspace char
 --  =+      filter <motion> through equalprg    down linewise and first nonspace    
@@ -53,7 +53,7 @@
 
 -- the basics
 vim.g.mapleader = vim.keycode" "
-vim.cmd.inoremap("jk <esc>")
+vim.cmd.inoremap("jk <esc>u")
 vim.cmd.set("expandtab shiftwidth=4 tabstop=4")
 vim.cmd.set("number relativenumber")
 
@@ -63,7 +63,7 @@ vim.cmd.nnoremap("<leader>h :noh<CR>")
 vim.g.have_nerd_font = True
 
 -- save and quit
-vim.cmd.inoremap("<C-s> <esc>:w<CR>i")
+vim.cmd.inoremap("<C-s> <esc>:w<CR>")
 vim.cmd.nnoremap("<C-s> :w<CR>")
 vim.cmd.nnoremap("<C-q> :q<CR>")
 
@@ -73,9 +73,11 @@ vim.cmd.nnoremap("<C-u> <C-u>zz")
 vim.cmd.nnoremap("n nzz")
 vim.cmd.nnoremap("N Nzz")
 vim.cmd.nnoremap("G Gzz")
+vim.cmd.set("scrolloff=10")
 
 -- file loading
-vim.cmd.nnoremap("<leader>i :e ~/.config/nvim/init.lua<CR>")
+vim.cmd.nnoremap("<leader>ei :e ~/.config/nvim/init.lua<CR>")
+vim.cmd.nnoremap("<leader>et :e $PWD/.todo.md<CR>")
 
 -- explorer
 vim.cmd.nnoremap("<C-f> :Explore $PWD<CR>")
@@ -104,3 +106,15 @@ vim.cmd.nnoremap("<leader>ld :!ls<CR>")
 -- colorscheme
 vim.cmd.nnoremap("<leader>c :colorscheme <C-d>")
 vim.cmd.colorscheme("vim")
+
+-- clipboard
+vim.cmd.noremap("<leader>sy \"+y")
+vim.cmd.noremap("<leader>sp \"+p")
+vim.cmd.noremap("<leader>sd \"+d")
+vim.cmd.noremap("<leader>sc \"+c")
+
+-- testing
+vim.cmd.noremap("<leader>t :!pytest<CR>")
+
+-- quality
+vim.cmd.nnoremap("<leader>q :!black -l 100 % & pylint %<CR>")
