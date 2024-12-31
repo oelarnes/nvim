@@ -1,120 +1,103 @@
--- 
--- 
--- 
---                           _   _ ______ ______      _______ __  __        _  __________     ____  __          _____  
---                          | \ | |  ____/ __ \ \    / /_   _|  \/  |      | |/ /  ____\ \   / /  \/  |   /\   |  __ \ 
---                          |  \| | |__ | |  | \ \  / /  | | | \  / |      | ' /| |__   \ \_/ /| \  / |  /  \  | |__) |
---                          | . ` |  __|| |  | |\ \/ /   | | | |\/| |      |  < |  __|   \   / | |\/| | / /\ \ |  ___/ 
---                          | |\  | |___| |__| | \  /   _| |_| |  | |      | . \| |____   | |  | |  | |/ ____ \| |     
---                          |_| \_|______\____/   \/   |_____|_|  |_|      |_|\_\______|  |_|  |_|  |_/_/    \_\_|     
---                                                                                                                     
---                                                                                       
---          lowercase                           uppercase                           CTRL-                           <leader>
---          =========                           =========                           =====                           ========
---  a       append                              append EOL                                                        
---  b       back word                           back WORD                           tmux
---  c       change                              c$                                  close buffer                    colorscheme
---  d       delete                              d$                                  half-page down
---  e       end of word                         end of WORD                                                         edit shortcuts
---  f       find char                           ?find char                          explore cwd
---  g       go                                  goto line                           
---  h       left                                blank line above                    window left                     turn off highlighting
---  i       insert                              insert BOL                          forward in jump stack           
---  j       down                                join lines                          window down
---  k       up                                  help lookup                         window up
---  l       right                               blank line below                    window right                    ls
---  m       mark                                                                 
---  n       next match                          previous match                      next buffer                     toggle numbers
---  o       insert below                        insert above                        back in jump stack
---  p       put                                 put before                          
---  q       record macro                        playback last register              quit                            quality (lint)
---  r       replace                             replace many                        redo
---  s       cl                                  cc                                  save                            system clipboard
---  t       to                                  back to                                                             testing
---  u       undo                                undo line                           half-page up
---  v       visual mode                         visual line                         visual block
---  w       word forward                        WORD forward                        window commands
---  x       delete char                         delete back                  
---  y       yank                                y$                      
---  z       folds                               ZZ/ZQ
---  -_      up linewise and first nonspace      first nonspace char
---  =+      filter <motion> through equalprg    down linewise and first nonspace    
---  [{      backward movements                  up paragraph                        
---  ]}      forward movements                   down paragraph                      into tag
---  \|                                                                              vsplit
---  ;:      next f match                        command
---  '"      
---  ,<
---  .>
---  /?
---  `~
---
--- ]
+-- see ~/.config/nvim/lua/custom/keymap.lua for keymap    
 
 -- the basics
 vim.g.mapleader = vim.keycode" "
-vim.cmd.inoremap("jk <esc>u")
-vim.cmd.set("expandtab shiftwidth=4 tabstop=4")
-vim.cmd.set("number relativenumber")
 
--- display
-vim.cmd.nnoremap("<leader>n :set number! relativenumber!<CR>")
-vim.cmd.nnoremap("<leader>h :noh<CR>")
-vim.g.have_nerd_font = True
+local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
+---@diagnostic disable-next-line: undefined-field
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+  local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
+  local out = vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
+  if vim.v.shell_error ~= 0 then
+    error('Error cloning lazy.nvim:\n' .. out)
+  end
+end ---@diagnostic disable-next-line: undefined-field
+vim.opt.rtp:prepend(lazypath)
 
--- save and quit
-vim.cmd.inoremap("<C-s> <esc>:w<CR>")
-vim.cmd.nnoremap("<C-s> :w<CR>")
-vim.cmd.nnoremap("<C-q> :q<CR>")
+vim.g.maplocalleader = "\\"
 
--- centering
-vim.cmd.nnoremap("<C-d> <C-d>zz")
-vim.cmd.nnoremap("<C-u> <C-u>zz")
-vim.cmd.nnoremap("n nzz")
-vim.cmd.nnoremap("N Nzz")
-vim.cmd.nnoremap("G Gzz")
-vim.cmd.set("scrolloff=10")
+-- Setup lazy.nvim
+require("lazy").setup({
+    spec = {
+        "catppuccin/nvim",
+        {
+            'nvim-treesitter/nvim-treesitter',
+            build = ':TSUpdate',
+            config = function()
+                require'nvim-treesitter.configs'.setup {
+                    -- A list of parser names, or "all" (the listed parsers MUST always be installed)
+                    ensure_installed = { "python", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline" },
+                    auto_install = true,
+                    highlight = {
+                        enable = true,
+                        additional_vim_regex_highlighting = false,
+                    },
+                }
+            end,
+	},
+        {
+            "neovim/nvim-lspconfig",
+            config = function()
+                local cfg = require("lspconfig")
+                cfg.pyright.setup{}
+                cfg.ruff.setup{}
+                cfg.lua_ls.setup{
+                    on_init = function(client)
+                        if client.workspace_folders then
+                            local path = client.workspace_folders[1].name
+                            ---@diagnostic disable-next-line: undefined-field
+                            if vim.uv.fs_stat(path..'/.luarc.json') or vim.uv.fs_stat(path..'/.luarc.jsonc') then
+                                return
+                            end
+                        end
 
--- file loading
-vim.cmd.nnoremap("<leader>ei :e ~/.config/nvim/init.lua<CR>")
-vim.cmd.nnoremap("<leader>et :e $PWD/.todo.md<CR>")
+                        client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
+                            runtime = {
+                                version = 'LuaJIT'
+                            },
+                            -- Make the server aware of Neovim runtime files
+                            workspace = {
+                                checkThirdParty = false,
+                                library = {
+                                    vim.env.VIMRUNTIME
+                                }
+                            }
+                        })
+                    end,
+                    settings = {
+                        Lua = {}
+                    }
+                }
+            end
+        },
+        {
+            "williamboman/mason.nvim",
+            opts = {}, -- calls .setup()
+        },
+        {
+            'nvim-telescope/telescope.nvim',
+            branch = '0.1.x',
+            dependencies = { 'nvim-lua/plenary.nvim' },
+            config = function()
+                require('telescope').setup({})
 
--- explorer
-vim.cmd.nnoremap("<C-f> :Explore $PWD<CR>")
+                -- telescope
+                local builtin = require('telescope.builtin')
+                vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find files' })
+                vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })
+                vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
+                vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
+            end
+        },
+    },
+   -- automatically check for plugin updates
+    checker = { enabled = true },
+})
 
--- window
-vim.cmd.nnoremap("<C-h> <C-w>h")
-vim.cmd.nnoremap("<C-j> <C-w>j")
-vim.cmd.nnoremap("<C-k> <C-w>k")
-vim.cmd.nnoremap("<C-l> <C-w>l")
-vim.cmd.set("splitright splitbelow")
-vim.cmd.nnoremap("<C-\\> :vs<CR>")
+vim.cmd.colorscheme("catppuccin")
 
--- adding lines
-vim.cmd.nnoremap("L o<esc>")
-vim.cmd.nnoremap("H O<esc>")
+require('keymap')
+require('options')
+require('python')
 
--- buffers
-vim.cmd.nnoremap("<C-c> :bd<CR>")
-vim.cmd.nnoremap("<C-n> :bn<CR>")
-vim.cmd.nnoremap("<C-p> :bp<CR>")
 
--- commands
-vim.cmd.nnoremap("<leader>lb :ls<CR>")
-vim.cmd.nnoremap("<leader>ld :!ls<CR>")
-
--- colorscheme
-vim.cmd.nnoremap("<leader>c :colorscheme <C-d>")
-vim.cmd.colorscheme("vim")
-
--- clipboard
-vim.cmd.noremap("<leader>sy \"+y")
-vim.cmd.noremap("<leader>sp \"+p")
-vim.cmd.noremap("<leader>sd \"+d")
-vim.cmd.noremap("<leader>sc \"+c")
-
--- testing
-vim.cmd.noremap("<leader>t :!pytest<CR>")
-
--- quality
-vim.cmd.nnoremap("<leader>q :!black -l 100 % & pylint %<CR>")
