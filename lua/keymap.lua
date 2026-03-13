@@ -81,10 +81,10 @@ map("n", "<leader>ld", ":!ls<CR>")
 map("n", "<leader>c", ":colorscheme <C-d>")
 
 -- system clipboard
-map({"n", "v"}, "<leader>sy", "\"+y")
-map({"n", "v"}, "<leader>sp", "\"+p")
-map({"n", "v"}, "<leader>sd", "\"+d")
-map({"n", "v"}, "<leader>sc", "\"+c")
+map({"n", "v"}, "<leader>yy", "\"+y")
+map({"n", "v"}, "<leader>yp", "\"+p")
+map({"n", "v"}, "<leader>yd", "\"+d")
+map({"n", "v"}, "<leader>yc", "\"+c")
 
 -- testing
 

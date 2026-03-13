@@ -1,6 +1,6 @@
 -- globals and options
 vim.g.pyindent_open_paren = 4
-vim.g.have_nerd_font = True
+vim.g.have_nerd_font = true
 
 vim.o.number = true
 vim.o.relativenumber = true

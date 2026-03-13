@@ -34,7 +34,19 @@ require("lazy").setup({
                     },
                 }
             end,
-	},
+	    },
+        {
+            "folke/which-key.nvim",
+            event = "VeryLazy",
+            keys = {
+                {
+                    "<leader>?", function()
+                        require("which-key").show({ global = false })
+                    end,
+                    desc = "Buffer Local Keymaps (which-key)",
+                },
+            },
+        },
         {
             "neovim/nvim-lspconfig",
             config = function()
@@ -71,6 +83,13 @@ require("lazy").setup({
             end
         },
         {
+            "lervag/vimtex",
+            lazy = false,
+            init = function()
+                vim.g.vimtex_view_method = "zathura"
+            end
+        },
+        {
             "williamboman/mason.nvim",
             opts = {}, -- calls .setup()
         },
@@ -89,6 +108,61 @@ require("lazy").setup({
                 vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
             end
         },
+        {
+            'Vigemus/iron.nvim',
+            config = function()
+                local iron = require("iron.core")
+                local view = require("iron.view")
+                local common = require("iron.fts.common")
+                iron.setup {
+                    config ={
+                        -- Whether a repl should be discarded or not
+                        scratch_repl = true,
+                        -- Your repl definitions come here
+                        repl_definition = {
+                          sh = {
+                            -- Can be a table or a function that
+                            -- returns a table (see below)
+                            command = {"zsh"}
+                          },
+                          python = {
+                            command = { "ipython", "--no-autoindent" },  -- or { "ipython", "--no-autoindent" }
+                            format = common.bracketed_paste_python,
+                            block_deviders = { "# %%", "#%%" },
+                          }
+                       }, ---@diagnostic disable-next-line: unused-local
+                       repl_filetype = function(bufnr, ft)
+                          return ft
+                       end,
+                       repl_open_cmd = view.split.vertical.botright("50%")
+                    },
+                    keymaps = {
+                        toggle_repl = "<space>rr", -- toggles the repl open and closed.
+                        -- If repl_open_command is a table as above, then the following keymaps are
+                        -- available
+                        -- toggle_repl_with_cmd_1 = "<space>rv",
+                        -- toggle_repl_with_cmd_2 = "<space>rh",
+                        restart_repl = "<space>rR", -- calls `IronRestart` to restart the repl
+                        send_motion = "<space>sc",
+                        visual_send = "<space>sc",
+                        send_file = "<space>sf",
+                        send_line = "<space>sl",
+                        send_paragraph = "<space>sp",
+                        cr = "<space>s<cr>",
+                        interrupt = "<space>s<space>",
+                        exit = "<space>sq",
+                        clear = "<space>sr",
+                    },
+                      -- If the highlight is on, you can change how it looks
+                      -- For the available options, check nvim_set_hl
+                    highlight = {
+                        italic = true
+                    },
+                    ignore_blank_lines = true, -- ignore blank lines when sending visual select lines
+                }
+                vim.keymap.set('n', '<leader>sw', '<leader>sciW', { remap = true, desc = 'iron_repl_send_word' })
+            end
+        }
     },
    -- automatically check for plugin updates
     checker = { enabled = true },
