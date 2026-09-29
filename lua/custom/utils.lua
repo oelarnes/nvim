@@ -2,10 +2,11 @@ local M = {}
 
 M.edit = function(path, mode)
     return function()
+        local expanded = vim.fn.expand(path)
         if mode == "view" then
-            vim.cmd.view(path)
+            vim.cmd.view(expanded)
         else
-            vim.cmd.edit(path)
+            vim.cmd.edit(expanded)
         end
     end
 end

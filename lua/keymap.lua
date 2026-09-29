@@ -31,7 +31,8 @@ map("n", "<leader>ei", u.edit("~/.config/nvim/init.lua"))
 map("n", "<leader>ek", u.edit("~/.config/nvim/lua/keymap.lua"))
 map("n", "<leader>eo", u.edit("~/.config/nvim/lua/options.lua"))
 map("n", "<leader>eu", u.edit("~/.config/nvim/lua/custom/utils.lua"))
-map("n", "<leader>et", u.edit("$PWD/.todo.md"))
+map("n", "<leader>et", u.edit("~/dev/.claude/todo.md"))
+map("n", "<leader>ej", u.edit("~/dev/.claude/joel.md"))
 map("n", "<leader>ez", u.edit("~/.config/nvim/lua/config/lazy.lua"))
 map("n", "<leader>ec", ":e ~/.config/nvim/")
 map("n", "<leader>ed", ":e %:h/")
@@ -40,7 +41,8 @@ map("n", "<leader>vi", u.edit("~/.config/nvim/init.lua", "view"))
 map("n", "<leader>vk", u.edit("~/.config/nvim/lua/keymap.lua", "view"))
 map("n", "<leader>vo", u.edit("~/.config/nvim/lua/options.lua", "view"))
 map("n", "<leader>vu", u.edit("~/.config/nvim/lua/custom/utils.lua", "view"))
-map("n", "<leader>vt", u.edit("$PWD/.todo.md", "view"))
+map("n", "<leader>vt", u.edit("~/dev/.claude/todo.md", "view"))
+map("n", "<leader>vj", u.edit("~/dev/.claude/joel.md", "view"))
 map("n", "<leader>vz", u.edit("~/.config/nvim/lua/config/lazy.lua", "view"))
 map("n", "<leader>vc", ":view ~/.config/nvim/")
 map("n", "<leader>vd", ":view %:h/")
@@ -85,6 +87,43 @@ map({"n", "v"}, "<leader>yy", "\"+y")
 map({"n", "v"}, "<leader>yp", "\"+p")
 map({"n", "v"}, "<leader>yd", "\"+d")
 map({"n", "v"}, "<leader>yc", "\"+c")
+
+-- git
+map("n", "<leader>g", function()
+    vim.fn.system("tmux popup -d '#{pane_current_path}' -xC -yC -w 90% -h 90% -e lazygit")
+end, { desc = "open lazygit" })
+map("n", "<leader>gm", ":DiffviewOpen main..HEAD<CR>", { desc = "diff vs main" })
+map("n", "<leader>gq", ":DiffviewClose<CR>", { desc = "close diffview" })
+
+-- claude integration
+-- yank file:line reference for cursor position
+map("n", "<leader>yr", function()
+    local ref = vim.fn.expand("%") .. ":" .. vim.fn.line(".")
+    vim.fn.setreg("+", ref)
+    vim.notify(ref, vim.log.levels.INFO)
+end, { desc = "yank file:line ref" })
+
+-- yank visual selection with file:startline-endline header
+map("v", "<leader>yv", function()
+    local start_line = vim.fn.line("'<")
+    local end_line = vim.fn.line("'>")
+    local header = vim.fn.expand("%") .. ":" .. start_line .. "-" .. end_line .. "\n"
+    local lines = vim.fn.getline(start_line, end_line)
+    vim.fn.setreg("+", header .. table.concat(lines, "\n"))
+    vim.notify(header:gsub("\n", ""), vim.log.levels.INFO)
+end, { desc = "yank selection with file context" })
+
+-- send visual selection to tmux pane named 'claude'
+map("v", "<leader>cs", function()
+    local start_line = vim.fn.line("'<")
+    local end_line = vim.fn.line("'>")
+    local header = vim.fn.expand("%") .. ":" .. start_line .. "-" .. end_line .. "\n"
+    local lines = vim.fn.getline(start_line, end_line)
+    local text = header .. table.concat(lines, "\n")
+    local escaped = text:gsub("'", "'\\''")
+    vim.fn.system("tmux send-keys -t claude '" .. escaped .. "' ''")
+    vim.notify("sent to tmux:claude", vim.log.levels.INFO)
+end, { desc = "send selection to tmux claude pane" })
 
 -- testing
 

@@ -50,36 +50,8 @@ require("lazy").setup({
         {
             "neovim/nvim-lspconfig",
             config = function()
-                local cfg = require("lspconfig")
-                cfg.pyright.setup{}
-                cfg.ruff.setup{}
-                cfg.lua_ls.setup{
-                    on_init = function(client)
-                        if client.workspace_folders then
-                            local path = client.workspace_folders[1].name
-                            ---@diagnostic disable-next-line: undefined-field
-                            if vim.uv.fs_stat(path..'/.luarc.json') or vim.uv.fs_stat(path..'/.luarc.jsonc') then
-                                return
-                            end
-                        end
-
-                        client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
-                            runtime = {
-                                version = 'LuaJIT'
-                            },
-                            -- Make the server aware of Neovim runtime files
-                            workspace = {
-                                checkThirdParty = false,
-                                library = {
-                                    vim.env.VIMRUNTIME
-                                }
-                            }
-                        })
-                    end,
-                    settings = {
-                        Lua = {}
-                    }
-                }
+                vim.lsp.enable('pyright')
+                vim.lsp.enable('ruff')
             end
         },
         {
@@ -106,6 +78,37 @@ require("lazy").setup({
                 vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })
                 vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
                 vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
+            end
+        },
+        {
+            'sindrets/diffview.nvim',
+            dependencies = { 'nvim-lua/plenary.nvim' },
+        },
+        {
+            'lewis6991/gitsigns.nvim',
+            config = function()
+                require('gitsigns').setup {
+                    signs = {
+                        add          = { text = '+' },
+                        change       = { text = '~' },
+                        delete       = { text = '_' },
+                        topdelete    = { text = '‾' },
+                        changedelete = { text = '~' },
+                    },
+                    on_attach = function(bufnr)
+                        local gs = require('gitsigns')
+                        local function map(mode, l, r, desc)
+                            vim.keymap.set(mode, l, r, { buffer = bufnr, desc = desc })
+                        end
+                        map('n', ']h', gs.next_hunk, 'next hunk')
+                        map('n', '[h', gs.prev_hunk, 'prev hunk')
+                        map({'n','v'}, '<leader>hs', gs.stage_hunk, 'stage hunk')
+                        map('n', '<leader>hu', gs.undo_stage_hunk, 'undo stage hunk')
+                        map('n', '<leader>hp', gs.preview_hunk, 'preview hunk')
+                        map('n', '<leader>hb', function() gs.blame_line { full = true } end, 'blame line')
+                        map('n', '<leader>hd', gs.diffthis, 'diff this')
+                    end
+                }
             end
         },
         {
@@ -173,5 +176,5 @@ vim.cmd.colorscheme("catppuccin")
 require('keymap')
 require('options')
 require('python')
-
+require('md')
 

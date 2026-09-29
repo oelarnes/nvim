@@ -1,4 +1,5 @@
 -- globals and options
+vim.diagnostic.config({ virtual_text = { source = true } })
 vim.g.pyindent_open_paren = 4
 vim.g.have_nerd_font = true
 
